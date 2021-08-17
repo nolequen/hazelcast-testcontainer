@@ -1,3 +1,3 @@
 # Hazelcast Testcontainer #
 
-[![Build Status](https://img.shields.io/travis/nolequen/hazelcast-testcontainer.svg?branch=master)](https://travis-ci.org/nolequen/hazelcast-testcontainer)
+[![Build Status](https://travis-ci.com/nolequen/hazelcast-testcontainer.svg?branch=main)](https://travis-ci.org/nolequen/hazelcast-testcontainer)
