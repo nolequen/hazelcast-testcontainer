@@ -1,16 +1,22 @@
 language: java
 
+dist: trusty
+
 jdk:
-  - oraclejdk11
+  - openjdk11
 
 sudo: false
+
+before_install:
+  - wget https://services.gradle.org/distributions/gradle-7.1-bin.zip
+  - unzip -qq gradle-7.1-bin.zip
+  - export GRADLE_HOME=$PWD/gradle-7.1
+  - export PATH=$GRADLE_HOME/bin:$PATH
+  - gradle -v
 
 install: true
 
 script: gradle build -x signArchives
 
-notifications:
-  email: false
-
-#after_success:
-#  - bash <(curl -s https://codecov.io/bash)
+#notifications:
+#  email: false
