@@ -27,9 +27,6 @@ java {
     withSourcesJar()
 }
 
-val ossrhUsername: String by project
-val ossrhPassword: String by project
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -72,6 +69,9 @@ publishing {
         maven {
             url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
+                val ossrhUsername: String by project
+                val ossrhPassword: String by project
+
                 username = ossrhUsername
                 password = ossrhPassword
             }
