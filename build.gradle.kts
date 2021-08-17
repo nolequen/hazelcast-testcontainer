@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    jacoco
 }
 
 group = "su.nlq"
@@ -14,6 +15,9 @@ repositories {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -22,9 +26,29 @@ dependencies {
     api("org.testcontainers:testcontainers:1.15.3")
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
+tasks {
+    jacocoTestReport {
+        executionData(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
+
+        reports {
+            sourceDirectories.setFrom(files(sourceSets["main"].allSource.srcDirs))
+            classDirectories.setFrom(files(sourceSets["main"].output))
+            csv.required.set(false)
+            html.required.set(false)
+            xml.required.set(true)
+            xml.outputLocation.set(File("$buildDir/reports/jacoco/report.xml"))
+        }
+
+        dependsOn("test")
+    }
+
+    test {
+        finalizedBy(jacocoTestReport)
+    }
+
+    jacocoTestReport {
+        dependsOn(test)
+    }
 }
 
 publishing {
