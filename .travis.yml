@@ -16,7 +16,10 @@ before_install:
 
 install: true
 
-script: gradle build -x signArchives
+script: gradle build
 
-#notifications:
-#  email: false
+notifications:
+  email: false
+
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
