@@ -16,7 +16,7 @@ import static com.hazelcast.client.spi.properties.ClientProperty.HEARTBEAT_INTER
 public final class ClientPropertiesTest extends ContainerTest {
 
   @ClassRule
-  public static final HazelcastContainer hazelcast = new HazelcastContainer("3.12.12").withTinyConfig();
+  public static final HazelcastContainer hazelcast = new HazelcastContainer("3.12.12");
 
   @Test
   public void propertyIsPassedToClient() {
