@@ -13,20 +13,36 @@ import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Customizable Hazelcast test container.
+ */
 public final class HazelcastContainer extends GenericContainer<HazelcastContainer> {
   private final List<HazelcastInstance> clients = new ArrayList<>();
   private final Map<String, String> properties = new HashMap<>();
   private String configPath = "";
 
+  /**
+   * Creates a {@link HazelcastContainer} with latest Hazelcast version.
+   */
   public HazelcastContainer() {
     this("latest");
   }
 
+  /**
+   * Creates a {@link HazelcastContainer} with specified Hazelcast version.
+   *
+   * @param version Hazelcast version
+   */
   public HazelcastContainer(String version) {
     super("hazelcast/hazelcast:" + version);
     withExposedPorts(NetworkConfig.DEFAULT_PORT);
   }
 
+  /**
+   * Adds tiny Hazelcast configuration whereby container could start faster.
+   *
+   * @return a reference to HazelcastContainer itself, so the API can be used fluently
+   */
   @SuppressWarnings("MagicNumber")
   public HazelcastContainer withTinyConfig() {
     configPath = "hazelcast-tiny.xml";
@@ -36,8 +52,24 @@ public final class HazelcastContainer extends GenericContainer<HazelcastContaine
         .withProperty(new HazelcastProperty(GroupProperty.EVENT_THREAD_COUNT.getName(), 1));
   }
 
+  /**
+   * Adds custom Hazelcast configuration file.
+   *
+   * @param path Configuration file path
+   * @return a reference to HazelcastContainer itself, so the API can be used fluently
+   */
   public HazelcastContainer withConfig(String path) {
     configPath = path;
+    return this;
+  }
+
+  /**
+   * Adds custom Hazelcast property to the container.
+   *
+   * @return a reference to HazelcastContainer itself, so the API can be used fluently
+   */
+  public HazelcastContainer withProperty(HazelcastProperty property) {
+    properties.put(property.getName(), property.getDefaultValue());
     return this;
   }
 
@@ -47,10 +79,21 @@ public final class HazelcastContainer extends GenericContainer<HazelcastContaine
     clients.forEach(client -> client.getLifecycleService().terminate());
   }
 
+  /**
+   * Creates and returns new Hazelcast client instance.
+   *
+   * @return client HazelcastInstance
+   */
   public HazelcastInstance newClient() {
     return newClient(Collections.emptySet());
   }
 
+  /**
+   * Creates and returns new Hazelcast client instance with custom properties.
+   *
+   * @param clientProperties Custom Hazelcast client properties
+   * @return client HazelcastInstance
+   */
   public HazelcastInstance newClient(Iterable<HazelcastProperty> clientProperties) {
     final ClientConfig config = new ClientConfig();
     for (HazelcastProperty property : clientProperties) {
@@ -60,11 +103,6 @@ public final class HazelcastContainer extends GenericContainer<HazelcastContaine
     final HazelcastInstance client = HazelcastClient.newHazelcastClient(config);
     clients.add(client);
     return client;
-  }
-
-  public HazelcastContainer withProperty(HazelcastProperty property) {
-    properties.put(property.getName(), property.getDefaultValue());
-    return this;
   }
 
   @Override
